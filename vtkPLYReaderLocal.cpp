@@ -225,6 +225,7 @@ int vtkPLYReaderLocal::RequestData(
       vtkPoints *pts = vtkPoints::New();
       pts->SetDataTypeToFloat();
       pts->SetNumberOfPoints(numPts);
+      pts->Reset();
       
       // Setup to read the PLY elements
       vtkPLY::ply_get_property (ply, elemName, &vertProps[0]);
@@ -256,11 +257,15 @@ int vtkPLYReaderLocal::RequestData(
       vtkCellArray* newVerts = vtkCellArray::New();
       newVerts->Allocate(newVerts->EstimateSize(1,numPts));
       newVerts->InsertNextCell(numPts);
+      newVerts->Reset();
       plyVertex vertex;
       for (int j=0; j < numPts; j++)
       {
         vtkPLY::ply_get_element (ply, (void *) &vertex);
+        float distance = sqrtf(vertex.x[0]*vertex.x[0]+vertex.x[1]*vertex.x[1]+vertex.x[2]*vertex.x[2]);
         //pts->SetPoint (j, vertex.x);
+        if (distance<7000)
+        {
         newVerts->InsertCellPoint(pts->InsertNextPoint(vertex.x));
         if ( TexCoordsPointsAvailable )
         {
@@ -275,6 +280,7 @@ int vtkPLYReaderLocal::RequestData(
           unsigned char colorValue[3] = {vertex.red, vertex.green, vertex.blue};
           RGBPoints->InsertNextTupleValue(colorValue);
           //RGBPoints->SetTuple3(j, vertex.red, vertex.green, vertex.blue);
+        }
         }
       }
       output->SetPoints(pts);

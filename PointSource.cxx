@@ -11,7 +11,7 @@
 
 int main ( int argc, char *argv[] )
 {
-  if(argc != 2)
+  if(argc != 4)
   {
     std::cout << "Usage: " << argv[0] << "  Filename(.ply)" << std::endl;
     return EXIT_FAILURE;
